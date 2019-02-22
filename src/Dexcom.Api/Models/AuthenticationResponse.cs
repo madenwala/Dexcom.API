@@ -2,7 +2,7 @@
 
 namespace Dexcom.Api.Models
 {
-    public class AuthenticationResult
+    public sealed class AuthenticationResponse
     {
         [JsonProperty("access_token")]
         public string AccessToken { get; set; }

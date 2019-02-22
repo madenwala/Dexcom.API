@@ -3,18 +3,18 @@ using System;
 
 namespace Dexcom.Api.Models
 {
-    public class EventsResponse
+    public sealed class EventsResponse
     {
         [JsonProperty("events")]
         public Event[] Events { get; set; } = new Event[] { };
     }
 
-    public class Event
+    public sealed class Event
     {
         [JsonProperty("systemTime")]
-        public string SystemTime { get; set; }
+        public DateTime SystemTime { get; set; }
 
-        [JsonProperty(PropertyName = "displayTime", ItemConverterType = typeof(DateTimeConverter))]
+        [JsonProperty(PropertyName = "displayTime")]
         public DateTime DisplayTime { get; set; }
 
         [JsonProperty("eventType")]

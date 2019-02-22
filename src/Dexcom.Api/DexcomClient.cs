@@ -19,7 +19,7 @@ namespace Dexcom.Api
         private string CallbackUrl { get; }
         private IDexcomAuthProvider AuthProvider { get; }
         public bool IsDevelopment { get; private set; } = false;
-        public AuthenticationResult Token { get; set; }
+        public AuthenticationResponse Token { get; set; }
 
         #endregion
 
@@ -97,7 +97,7 @@ namespace Dexcom.Api
 
         #region Authentication
 
-        public async Task<AuthenticationResult> AuthenticateAsync(CancellationToken ct)
+        public async Task<AuthenticationResponse> AuthenticateAsync(CancellationToken ct)
         {
             if(this.Token != null)
             {
@@ -116,10 +116,10 @@ namespace Dexcom.Api
             return this.Token;
         }
 
-        private async Task<AuthenticationResult> RefreshAccessTokenAsync(CancellationToken ct)
+        private async Task<AuthenticationResponse> RefreshAccessTokenAsync(CancellationToken ct)
         {
             // TODO implement refresh token
-            return await Task.FromResult<AuthenticationResult>(null);
+            return await Task.FromResult<AuthenticationResponse>(null);
         }
 
         private string GetUserAuthorizationUrl(string redirectUrl, string state = null)
@@ -133,7 +133,7 @@ namespace Dexcom.Api
             return new Uri(this.BaseUri, "/v2/oauth2/login" + dic.ToQueryString()).ToString();
         }
 
-        private async Task<AuthenticationResult> GetAccessTokenAsync(string authorizationCode, string redirectUrl, CancellationToken ct)
+        private async Task<AuthenticationResponse> GetAccessTokenAsync(string authorizationCode, string redirectUrl, CancellationToken ct)
         {
             var dic = new Dictionary<string, string>();
             dic.Add("client_id", this.ClientID);
@@ -144,7 +144,7 @@ namespace Dexcom.Api
 
             this.Client.DefaultRequestHeaders.Clear();
             this.Client.DefaultRequestHeaders.Add("cache-control", "no-cache");
-            this.Token = await this.PostAsync<AuthenticationResult>("/v2/oauth2/token", ct, new FormUrlEncodedContent(dic));
+            this.Token = await this.PostAsync<AuthenticationResponse>("/v2/oauth2/token", ct, new FormUrlEncodedContent(dic));
             return this.Token;
         }
 
@@ -152,33 +152,29 @@ namespace Dexcom.Api
 
         #region DataRange
 
-        public async Task<string> GetDataRangeAsync(CancellationToken ct)
+        public Task<DataRangeResponse> GetDataRangeAsync(CancellationToken ct)
         {
             this.SetHeaders();
-            using (var response = await this.GetAsync("/v2/users/self/dataRange", ct))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.ContentToString();
-            }
+            return this.GetAsync<DataRangeResponse>("/v2/users/self/dataRange", ct);
         }
 
         #endregion DataRange
 
         #region EGV
 
-        public Task<string> GetEstimatedGlucoseValueAsync(CancellationToken ct)
+        public Task<EGVsResponse> GetEstimatedGlucoseValueAsync(CancellationToken ct)
         {
             // Return EGV for based on today
             return this.GetEstimatedGlucoseValueAsync(DateTime.Now, ct);
         }
 
-        public Task<string> GetEstimatedGlucoseValueAsync(DateTime endDate, CancellationToken ct)
+        public Task<EGVsResponse> GetEstimatedGlucoseValueAsync(DateTime endDate, CancellationToken ct)
         {
             // Return the last 24 hours from the end date
             return this.GetEstimatedGlucoseValueAsync(endDate, 24, ct);
         }
 
-        public Task<string> GetEstimatedGlucoseValueAsync(DateTime endDate, int hours, CancellationToken ct)
+        public Task<EGVsResponse> GetEstimatedGlucoseValueAsync(DateTime endDate, int hours, CancellationToken ct)
         {
             // Ensure that hours is negative
             if (hours > 0)
@@ -188,39 +184,33 @@ namespace Dexcom.Api
             return this.GetEstimatedGlucoseValueAsync(endDate.AddHours(hours), endDate, ct);
         }
 
-        public async Task<string> GetEstimatedGlucoseValueAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
+        public Task<EGVsResponse> GetEstimatedGlucoseValueAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
         {
             this.SetHeaders();
-
             this.ValidateDates(ref startDate, ref endDate);
             var dic = new Dictionary<string, object>();
             dic.Add("startDate", this.FormatDate(startDate));
             dic.Add("endDate", this.FormatDate(endDate));
-
-            using (var response = await this.GetAsync("/v2/users/self/egvs" + dic.ToQueryString(), ct))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.ContentToString();
-            }
+            return this.GetAsync<EGVsResponse>("/v2/users/self/egvs" + dic.ToQueryString(), ct);
         }
 
         #endregion EGV
 
         #region Devices
 
-        public Task<string> GetDevicesAsync(CancellationToken ct)
+        public Task<DevicesResponse> GetDevicesAsync(CancellationToken ct)
         {
             // Return devices for based on today
             return this.GetDevicesAsync(DateTime.Now, ct);
         }
 
-        public Task<string> GetDevicesAsync(DateTime endDate, CancellationToken ct)
+        public Task<DevicesResponse> GetDevicesAsync(DateTime endDate, CancellationToken ct)
         {
             // Return the last 24 hours from the end date
             return this.GetDevicesAsync(endDate, 24, ct);
         }
 
-        public Task<string> GetDevicesAsync(DateTime endDate, int hours, CancellationToken ct)
+        public Task<DevicesResponse> GetDevicesAsync(DateTime endDate, int hours, CancellationToken ct)
         {
             // Ensure that hours is negative
             if (hours > 0)
@@ -230,20 +220,14 @@ namespace Dexcom.Api
             return this.GetDevicesAsync(endDate.AddHours(hours), endDate, ct);
         }
 
-        public async Task<string> GetDevicesAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
+        public Task<DevicesResponse> GetDevicesAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
         {
             this.SetHeaders();
-
             this.ValidateDates(ref startDate, ref endDate);
             var dic = new Dictionary<string, object>();
             dic.Add("startDate", this.FormatDate(startDate));
             dic.Add("endDate", this.FormatDate(endDate));
-
-            using (var response = await this.GetAsync("/v2/users/self/devices" + dic.ToQueryString(), ct))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.ContentToString();
-            }
+            return this.GetAsync<DevicesResponse>("/v2/users/self/devices" + dic.ToQueryString(), ct);
         }
 
         #endregion
@@ -272,35 +256,33 @@ namespace Dexcom.Api
             return this.GetEventsAsync(endDate.AddHours(hours), endDate, ct);
         }
 
-        public async Task<EventsResponse> GetEventsAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
+        public Task<EventsResponse> GetEventsAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
         {
             this.SetHeaders();
-
             this.ValidateDates(ref startDate, ref endDate);
             var dic = new Dictionary<string, object>();
             dic.Add("startDate", this.FormatDate(startDate));
             dic.Add("endDate", this.FormatDate(endDate));
-
-            return await this.GetAsync<EventsResponse>("/v2/users/self/events" + dic.ToQueryString(), ct);
+            return this.GetAsync<EventsResponse>("/v2/users/self/events" + dic.ToQueryString(), ct);
         }
 
         #endregion
 
         #region Calibrate
 
-        public Task<string> GetCalibrateAsync(CancellationToken ct)
+        public Task<CalibrationsResponse> GetCalibrateAsync(CancellationToken ct)
         {
             // Return calibrate for based on today
             return this.GetCalibrateAsync(DateTime.Now, ct);
         }
 
-        public Task<string> GetCalibrateAsync(DateTime endDate, CancellationToken ct)
+        public Task<CalibrationsResponse> GetCalibrateAsync(DateTime endDate, CancellationToken ct)
         {
             // Return the last 24 hours from the end date
             return this.GetCalibrateAsync(endDate, 24, ct);
         }
 
-        public Task<string> GetCalibrateAsync(DateTime endDate, int hours, CancellationToken ct)
+        public Task<CalibrationsResponse> GetCalibrateAsync(DateTime endDate, int hours, CancellationToken ct)
         {
             // Ensure that hours is negative
             if (hours > 0)
@@ -310,39 +292,33 @@ namespace Dexcom.Api
             return this.GetCalibrateAsync(endDate.AddHours(hours), endDate, ct);
         }
 
-        public async Task<string> GetCalibrateAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
+        public Task<CalibrationsResponse> GetCalibrateAsync(DateTime startDate, DateTime endDate, CancellationToken ct)
         {
             this.SetHeaders();
-
             this.ValidateDates(ref startDate, ref endDate);
             var dic = new Dictionary<string, object>();
             dic.Add("startDate", this.FormatDate(startDate));
             dic.Add("endDate", this.FormatDate(endDate));
-
-            using (var response = await this.GetAsync("/v2/users/self/calibrations" + dic.ToQueryString(), ct))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.ContentToString();
-            }
+            return this.GetAsync<CalibrationsResponse>("/v2/users/self/calibrations" + dic.ToQueryString(), ct);
         }
 
         #endregion
 
         #region Statistics
 
-        public Task<string> PostStatisticsAsync(Statistics stats, CancellationToken ct)
+        public Task<StatisticsResponse> PostStatisticsAsync(StatisticsRequest stats, CancellationToken ct)
         {
             // Return calibrate for based on today
             return this.PostStatisticsAsync(stats, DateTime.Now, ct);
         }
 
-        public Task<string> PostStatisticsAsync(Statistics stats, DateTime endDate, CancellationToken ct)
+        public Task<StatisticsResponse> PostStatisticsAsync(StatisticsRequest stats, DateTime endDate, CancellationToken ct)
         {
             // Return the last 24 hours from the end date
             return this.PostStatisticsAsync(stats, endDate, 24, ct);
         }
 
-        public Task<string> PostStatisticsAsync(Statistics stats, DateTime endDate, int hours, CancellationToken ct)
+        public Task<StatisticsResponse> PostStatisticsAsync(StatisticsRequest stats, DateTime endDate, int hours, CancellationToken ct)
         {
             // Ensure that hours is negative
             if (hours > 0)
@@ -352,21 +328,15 @@ namespace Dexcom.Api
             return this.PostStatisticsAsync(stats, endDate.AddHours(hours), endDate, ct);
         }
 
-        public async Task<string> PostStatisticsAsync(Statistics stats, DateTime startDate, DateTime endDate, CancellationToken ct)
+        public Task<StatisticsResponse> PostStatisticsAsync(StatisticsRequest stats, DateTime startDate, DateTime endDate, CancellationToken ct)
         {
             this.SetHeaders();
-
             this.ValidateDates(ref startDate, ref endDate);
             var dic = new Dictionary<string, object>();
             dic.Add("startDate", this.FormatDate(startDate));
             dic.Add("endDate", this.FormatDate(endDate));
-
             StringContent content = new StringContent(JsonConvert.SerializeObject(stats));
-            using (var response = await this.PostAsync("/v2/users/self/calibrations" + dic.ToQueryString(), ct, content))
-            {
-                response.EnsureSuccessStatusCode();
-                return await response.ContentToString();
-            }
+            return this.PostAsync<StatisticsResponse>("/v2/users/self/calibrations" + dic.ToQueryString(), ct, content);
         }
 
         #endregion
