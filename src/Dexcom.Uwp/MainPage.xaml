@@ -9,9 +9,13 @@
 
     <ScrollViewer>
         <StackPanel Padding="10" HorizontalAlignment="Stretch">
-            <StackPanel>
+            <StackPanel Padding="0,20" Orientation="Horizontal">
                 <ToggleSwitch x:Name="tsIsDev" Header="Is Developer" IsOn="True" />
-                <Button Padding="10" Margin="0,30" Content="Authenticate" Click="Button_Click" />
+                <Button Content="Login" Click="btnLogin_Click" Margin="10" />
+                <Button Content="Logout" Click="btnLogout_Click" Margin="10" />
+                <Button Content="Refresh" Click="btnRefresh_Click" Margin="10" />
+                <DatePicker x:Name="dpStartDate" Header="Start Date" Margin="10" />
+                <DatePicker x:Name="dpEndDate" Header="End Date" Margin="10" />
             </StackPanel>
             <StackPanel x:Name="spToken">
                 <TextBlock Text="Token" />
