@@ -107,7 +107,7 @@ namespace Dexcom.Api
             }
 
             var url = this.GetUserAuthorizationUrl(this.CallbackUrl);
-            var authorizationCode = await this.AuthProvider.PromptForCredentialsAsync(url, this.CallbackUrl, ct);
+            var authorizationCode = await this.AuthProvider.PromptUserForCredentialsAsync(url, this.CallbackUrl, ct);
             if (authorizationCode != null)
                 this.Token = await this.GetAccessTokenAsync(authorizationCode, this.CallbackUrl, ct);
             else
