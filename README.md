@@ -1,4 +1,4 @@
-# API for Dexcom
+# API for Dexcom for .NET based applications
 The Dexcom API enables the development of innovative apps that amplify the value and utility of CGM data. 
 
 ## Dexcom.Api
