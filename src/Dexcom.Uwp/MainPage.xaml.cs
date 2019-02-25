@@ -27,6 +27,18 @@ namespace Dexcom.Uwp
             await this.RefreshAsync(ct);
         }
 
+        private async void btnRefreshToken_Click(object sender, RoutedEventArgs e)
+        {
+            CancellationToken ct = new CancellationToken();
+            if (this.Client?.Token != null)
+            {
+                spToken.DataContext = await this.Client.RefreshAccessTokenAsync(ct);
+                await this.RefreshAsync(ct);
+            }
+            else
+                await this.AuthenticateAsync(ct);
+        }
+
         private async void btnLogout_Click(object sender, RoutedEventArgs e)
         {
             if (this.Client != null)
@@ -37,7 +49,7 @@ namespace Dexcom.Uwp
             }
         }
 
-        private async void btnRefresh_Click(object sender, RoutedEventArgs e)
+        private async void btnRefreshData_Click(object sender, RoutedEventArgs e)
         {
             CancellationToken ct = new CancellationToken();
             if (this.Client == null)
@@ -123,6 +135,20 @@ namespace Dexcom.Uwp
             catch (Exception ex)
             {
                 piStatistics.DataContext = ex.ToString();
+            }
+        }
+
+        private void TsIsDev_IsEnabledChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (tsIsDev.IsOn)
+            {
+                dpStartDate.SelectedDate = new DateTimeOffset(new DateTime(2018, 4, 15));
+                dpEndDate.SelectedDate = new DateTimeOffset(new DateTime(2018, 4, 15));
+            }
+            else
+            {
+                dpStartDate.SelectedDate = new DateTimeOffset(DateTime.Now);
+                dpEndDate.SelectedDate = new DateTimeOffset(DateTime.Now.AddDays(1));
             }
         }
     }

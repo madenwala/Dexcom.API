@@ -101,9 +101,16 @@ namespace Dexcom.Api
         {
             if(this.Token != null)
             {
-                this.Token = await this.RefreshAccessTokenAsync(ct);
-                if (this.Token != null)
-                    return this.Token;
+                try
+                {
+                    this.Token = await this.RefreshAccessTokenAsync(ct);
+                    if (this.Token != null)
+                        return this.Token;
+                }
+                catch(Exception ex)
+                {
+                    System.Diagnostics.Debug.WriteLine("Reauthentication through AuthenticateAsync failed: " + ex.ToString());
+                }
             }
 
             var url = this.GetUserAuthorizationUrl(this.CallbackUrl);
@@ -116,10 +123,24 @@ namespace Dexcom.Api
             return this.Token;
         }
 
-        private async Task<AuthenticationResponse> RefreshAccessTokenAsync(CancellationToken ct)
+        public async Task<AuthenticationResponse> RefreshAccessTokenAsync(CancellationToken ct)
         {
-            // TODO implement refresh token
-            return await Task.FromResult<AuthenticationResponse>(null);
+            if (this.Token != null)
+            {
+                var dic = new Dictionary<string, string>();
+                dic.Add("client_id", this.ClientID);
+                dic.Add("client_secret", this.ClientSecret);
+                dic.Add("refresh_token", this.Token.RefreshToken);
+                dic.Add("grant_type", "refresh_token");
+                dic.Add("redirect_uri", this.CallbackUrl);
+
+                this.Client.DefaultRequestHeaders.Clear();
+                this.Client.DefaultRequestHeaders.Add("cache-control", "no-cache");
+                this.Token = await this.PostAsync<AuthenticationResponse>("/v2/oauth2/token", ct, new FormUrlEncodedContent(dic));
+                return this.Token;
+            }
+            else
+                return null;
         }
 
         private string GetUserAuthorizationUrl(string redirectUrl, string state = null)
