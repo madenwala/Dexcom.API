@@ -11,6 +11,9 @@
     <Copyright>Copyright © 2019</Copyright>
     <PackageReleaseNotes>Initial release of API</PackageReleaseNotes>
     <PackageIconUrl>https://github.com/madenwala/Dexcom.API/blob/master/Images/Logo.jpg?raw=true</PackageIconUrl>
+    <PackageTags>Dexcom, Glucose, Diabetes, GCM</PackageTags>
+    <RepositoryUrl>https://github.com/madenwala/Dexcom.API</RepositoryUrl>
+    <Product>Dexcom GCM Api</Product>
   </PropertyGroup>
 
   <ItemGroup>
