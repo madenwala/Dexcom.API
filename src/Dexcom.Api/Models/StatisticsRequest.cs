@@ -2,13 +2,13 @@
 
 namespace Dexcom.Api.Models
 {
-    public class StatisticsRequest
+    public sealed class StatisticsRequest
     {
         [JsonProperty("targetRanges")]
         public TargetRange[] TargetRanges { get; set; } = new TargetRange[] { };
     }
 
-    public class TargetRange
+    public sealed class TargetRange
     {
         [JsonProperty("name")]
         public string Name { get; set; }
@@ -23,7 +23,7 @@ namespace Dexcom.Api.Models
         public EgvRange[] EgvRanges { get; set; }
     }
 
-    public class EgvRange
+    public sealed class EgvRange
     {
         [JsonProperty("name")]
         public EgvRangeNames Name { get; set; }
