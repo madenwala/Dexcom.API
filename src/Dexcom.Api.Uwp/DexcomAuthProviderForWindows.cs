@@ -6,7 +6,7 @@ using Windows.Security.Authentication.Web;
 
 namespace Dexcom.Api.Uwp
 {
-    public sealed class DexcomAuthProviderForWindows : IDexcomAuthProvider
+    public sealed class DexcomAuthProviderForWindows : IAuthProvider
     {
         public async Task<string> PromptUserForCredentialsAsync(string authenticationUrl, string callbackUrl, CancellationToken ct)
         {

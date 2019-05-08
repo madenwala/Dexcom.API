@@ -8,7 +8,11 @@ namespace Dexcom.Api.Uwp.Extensions
         public static string GetQueryParameter(this Uri uri, string parameterName)
         {
             var queryDictionary = HttpUtility.ParseQueryString(uri.Query);
-            return Uri.UnescapeDataString(queryDictionary[parameterName]);
+            var value = queryDictionary[parameterName];
+            if (!string.IsNullOrWhiteSpace(value))
+                return Uri.UnescapeDataString(value);
+            else
+                return null;
         }
     }
 }

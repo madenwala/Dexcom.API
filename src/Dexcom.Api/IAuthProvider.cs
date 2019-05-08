@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Dexcom.Api
 {
-    public interface IDexcomAuthProvider
+    public interface IAuthProvider
     {
         Task<string> PromptUserForCredentialsAsync(string authenticationUrl, string callbackUrl, CancellationToken ct);
     }
