@@ -45,7 +45,7 @@ namespace Dexcom.Api
                 this.BaseUri = new Uri(baseUrl);
         }
 
-        private Uri CreateRequestUri(string url)
+        protected Uri CreateRequestUri(string url)
         {
             if (string.IsNullOrEmpty(url))
                 throw new ArgumentNullException(nameof(url));
