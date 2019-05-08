@@ -1,14 +1,14 @@
-﻿using Dexcom.Api.Uwp.Extensions;
+﻿using Dexcom.Api;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Security.Authentication.Web;
 
-namespace Dexcom.Api.Uwp
+namespace Dexcom.Uwp
 {
-    public sealed class DexcomAuthProviderForWindows : IAuthProvider
+    public sealed class DexcomAuthProvider : IAuthProvider
     {
-        public async Task<string> PromptUserForCredentialsAsync(string authenticationUrl, string callbackUrl, CancellationToken ct)
+        public async Task<string> AuthenticationAsync(string authenticationUrl, string callbackUrl, CancellationToken ct)
         {
             var result = await WebAuthenticationBroker.AuthenticateAsync(
                        WebAuthenticationOptions.None,

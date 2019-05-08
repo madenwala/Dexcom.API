@@ -120,6 +120,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Credentials.cs" />
+    <Compile Include="DexcomAuthProvider.cs" />
+    <Compile Include="Extensions\UriExtensions.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
@@ -156,10 +158,6 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dexcom.Api.Uwp\Dexcom.Api.Uwp.csproj">
-      <Project>{4e22a2b5-04e3-4865-a550-df40341d16e7}</Project>
-      <Name>Dexcom.Api.Uwp</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Dexcom.Api\Dexcom.Api.csproj">
       <Project>{912e48ea-a43e-456e-94fe-14b2876c5c61}</Project>
       <Name>Dexcom.Api</Name>

@@ -5,6 +5,6 @@ namespace Dexcom.Api
 {
     public interface IAuthProvider
     {
-        Task<string> PromptUserForCredentialsAsync(string authenticationUrl, string callbackUrl, CancellationToken ct);
+        Task<string> AuthenticationAsync(string authenticationUrl, string callbackUrl, CancellationToken ct);
     }
 }

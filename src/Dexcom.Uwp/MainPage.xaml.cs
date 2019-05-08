@@ -1,5 +1,4 @@
 ﻿using Dexcom.Api;
-using Dexcom.Api.Uwp;
 using Newtonsoft.Json;
 using System;
 using System.Threading;
@@ -59,7 +58,7 @@ namespace Dexcom.Uwp
 
         private async Task AuthenticateAsync(CancellationToken ct)
         {
-            this.Client = new DexcomClient(Credentials.CLIENT_ID, Credentials.CLIENT_SECRET, Credentials.CALLBACK_URL, new DexcomAuthProviderForWindows(), tsIsDev.IsOn);
+            this.Client = new DexcomClient(Credentials.CLIENT_ID, Credentials.CLIENT_SECRET, Credentials.CALLBACK_URL, new DexcomAuthProvider(), tsIsDev.IsOn);
             spToken.DataContext = await this.Client.AuthenticateAsync(ct);
         }
 

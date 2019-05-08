@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Web;
 
-namespace Dexcom.Api.Uwp.Extensions
+namespace Dexcom.Uwp
 {
     public static class UriExtensions
     {
