@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using Dexcom.Api;
+using Dexcom.Api.Uwp;
+using Newtonsoft.Json;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,11 +11,13 @@ namespace Dexcom.Uwp
 {
     public sealed partial class MainPage : Page
     {
-        private WinkClient Client { get; set; }
+        private DexcomClient Client { get; set; }
 
         public MainPage()
         {
             this.InitializeComponent();
+            this.dpStartDate.SelectedDate = new DateTimeOffset(new DateTime(2018, 1, 15));
+            this.dpEndDate.SelectedDate = new DateTimeOffset(new DateTime(2018, 4, 15));
         }
 
         private async void btnLogin_Click(object sender, RoutedEventArgs e)

@@ -17,7 +17,7 @@ namespace Dexcom.Api
         private string ClientID { get; }
         private string ClientSecret { get; }
         private string CallbackUrl { get; }
-        private IDexcomAuthProvider AuthProvider { get; }
+        private IAuthProvider AuthProvider { get; }
         public bool IsDevelopment { get; private set; } = false;
         public AuthenticationResponse Token { get; set; }
 
@@ -25,7 +25,7 @@ namespace Dexcom.Api
 
         #region Constructors
 
-        public DexcomClient(string clientID, string clientSecret, string callbackUrl, IDexcomAuthProvider authProvider, bool isDevelopment = false) : base()
+        public DexcomClient(string clientID, string clientSecret, string callbackUrl, IAuthProvider authProvider, bool isDevelopment = false) : base()
         {
             if (string.IsNullOrEmpty(clientID)) throw new ArgumentNullException(nameof(clientID));
             if (string.IsNullOrEmpty(clientSecret)) throw new ArgumentNullException(nameof(clientSecret));
